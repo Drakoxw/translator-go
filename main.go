@@ -11,7 +11,7 @@ import (
 
 func main() {
 	r := mux.NewRouter()
-	r.HandleFunc("/translate", handlers.TranslateHandler).Methods("POST")
+	r.HandleFunc("/translate", handlers.TranslateHandler).Methods("POST", "PUT")
 
 	log.Println("Servidor iniciado en el puerto 8080")
 	http.ListenAndServe(":8080", r)
