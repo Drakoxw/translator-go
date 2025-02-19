@@ -11,13 +11,7 @@ import (
 func main() {
 	r := gin.Default()
 
-	r.POST("/translate", func(c *gin.Context) {
-		handlers.TranslateHandler(c.Writer, c.Request)
-	})
-
-	r.PUT("/translate", func(c *gin.Context) {
-		handlers.TranslateHandler(c.Writer, c.Request)
-	})
+	r.GET("/translate", handlers.TranslateHandlerV2)
 
 	log.Println("Servidor iniciado en el puerto 8080")
 	if err := r.Run(":8080"); err != nil {

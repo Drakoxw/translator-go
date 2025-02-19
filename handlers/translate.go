@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 	"translate/services"
+
+	"github.com/gin-gonic/gin"
 )
 
 type TranslationRequest struct {
@@ -32,4 +34,26 @@ func TranslateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(TranslationResponse{TranslatedText: translatedText})
+}
+
+func TranslateHandlerV2(c *gin.Context) {
+	text := c.Query("text")
+	sourceLang := c.Query("source_lang")
+	targetLang := c.Query("target_lang")
+
+	var req TranslationRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Solicitud inválida"})
+		return
+	}
+
+	translatedText, err := services.TranslateText(text, sourceLang, targetLang)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error en la traducción: " + err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, TranslationResponse{TranslatedText: translatedText})
+
 }
