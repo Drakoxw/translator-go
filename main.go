@@ -2,17 +2,25 @@ package main
 
 import (
 	"log"
-	"net/http"
 
 	"translate/handlers"
 
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	r := mux.NewRouter()
-	r.HandleFunc("/translate", handlers.TranslateHandler).Methods("POST", "PUT")
+	r := gin.Default()
+
+	r.POST("/translate", func(c *gin.Context) {
+		handlers.TranslateHandler(c.Writer, c.Request)
+	})
+
+	r.PUT("/translate", func(c *gin.Context) {
+		handlers.TranslateHandler(c.Writer, c.Request)
+	})
 
 	log.Println("Servidor iniciado en el puerto 8080")
-	http.ListenAndServe(":8080", r)
+	if err := r.Run(":8080"); err != nil {
+		log.Fatalf("Error al iniciar el servidor: %v", err)
+	}
 }
