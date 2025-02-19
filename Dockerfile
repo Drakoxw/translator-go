@@ -25,7 +25,7 @@ EXPOSE 8080
 EXPOSE 5000
 
 # Variables de entorno
-ENV LIBRETRANSLATE_URL=http://libretranslate:5000/translate
+ENV LIBRETRANSLATE_URL=http://localhost:5000
 
 # Comando para iniciar ambos servicios (utiliza supervisord, por ejemplo)
 RUN apt-get update && apt-get install -y supervisor
