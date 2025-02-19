@@ -41,10 +41,18 @@ func TranslateHandlerV2(c *gin.Context) {
 	sourceLang := c.Query("source_lang")
 	targetLang := c.Query("target_lang")
 
-	var req TranslationRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		log.Println(err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Solicitud inválida"})
+	if text == "" || sourceLang == "" || targetLang == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Parámetros inválidos"})
+		return
+	}
+
+	// lenguajes permitidos: 'es', 'en', 'fr'
+	allowedLanguages := map[string]bool{
+		"es": true, "en": true, "fr": true,
+	}
+
+	if !allowedLanguages[sourceLang] || !allowedLanguages[targetLang] {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Solo se permiten 'es', 'en', 'fr'"})
 		return
 	}
 
