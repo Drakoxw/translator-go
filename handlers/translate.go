@@ -19,21 +19,25 @@ type TranslationResponse struct {
 	TranslatedText string `json:"translated_text"`
 }
 
-func TranslateHandler(w http.ResponseWriter, r *http.Request) {
+func HelloWord(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"message": "Hola mundo!"})
+}
+
+func TranslateHandler(c *gin.Context) {
 	var req TranslationRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+	if err := json.NewDecoder(c.Request.Body).Decode(&req); err != nil {
 		log.Println(err.Error())
-		http.Error(w, "Solicitud inválida", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Error en la traducción: " + err.Error()})
 		return
 	}
 
 	translatedText, err := services.TranslateText(req.Text, req.SourceLang, req.TargetLang)
 	if err != nil {
-		http.Error(w, "Error en la traducción: "+err.Error(), http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error en la traducción: " + err.Error()})
 		return
 	}
 
-	json.NewEncoder(w).Encode(TranslationResponse{TranslatedText: translatedText})
+	c.JSON(http.StatusOK, TranslationResponse{TranslatedText: translatedText})
 }
 
 func TranslateHandlerV2(c *gin.Context) {
